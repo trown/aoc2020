@@ -11,6 +11,6 @@ pub fn get_day(day: u32) -> (DayFn, DayFn) {
         _ => {
             println!("Unknown day: {}", day);
             return (noop, noop);
-        },
+        }
     };
 }
