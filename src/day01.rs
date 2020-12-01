@@ -20,7 +20,7 @@ pub fn part2(inp: String) {
   let mut seen2: HashMap<usize, usize> = HashMap::new();
   for x in nums.iter() {
     let key = 2020-x;
-		seen.iter().map(|s| seen2.insert(x+s, x*s)).count();
+		seen.iter().for_each(|s| {seen2.insert(x+s, x*s);});
     if seen2.contains_key(&key) {
       println!("{}", seen2.get(&key).unwrap() * x);
       return
