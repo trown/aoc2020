@@ -3,7 +3,7 @@ pub fn get_trees(tree_map: &Vec<&str>, rise: usize, run: usize) -> usize {
         .iter()
         .enumerate()
         .filter(|(i, _)| i % rise == 0)
-        .filter(|(i, line)| line.chars().nth((run * i / rise) % 31) == Some('#'))
+        .filter(|(i, line)| line.chars().nth((run * i / rise) % line.len()) == Some('#'))
         .count()
 }
 
