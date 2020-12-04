@@ -50,17 +50,21 @@ pub struct PassRule {
 }
 
 pub fn part1(inp: String) {
-    let pass_map = inp
-        .lines()
-        .map(|e| e.parse::<PassEntry>().unwrap())
-        .collect::<Vec<PassEntry>>();
-    println!("{}", pass_map.iter().filter(|p| p.is_valid()).count());
+    println!(
+        "{}",
+        inp.lines()
+            .map(|e| e.parse::<PassEntry>().unwrap())
+            .filter(|p| p.is_valid())
+            .count()
+    );
 }
 
 pub fn part2(inp: String) {
-    let pass_map = inp
-        .lines()
-        .map(|e| e.parse::<PassEntry>().unwrap())
-        .collect::<Vec<PassEntry>>();
-    println!("{}", pass_map.iter().filter(|p| p.is_valid_part2()).count());
+    println!(
+        "{}",
+        inp.lines()
+            .map(|e| e.parse::<PassEntry>().unwrap())
+            .filter(|p| p.is_valid_part2())
+            .count()
+    );
 }
