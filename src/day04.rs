@@ -45,7 +45,16 @@ impl<'a> Passport<'a> {
             && self.pid.is_some()
     }
 
-    pub fn is_valid2(&self) -> bool {
+    pub fn is_valid_strict(&self) -> bool {
+        self.is_valid_byr()
+            && self.is_valid_iyr()
+            && self.is_valid_eyr()
+            && self.is_valid_hgt()
+            && self.is_valid_hcl()
+            && self.is_valid_ecl()
+            && self.is_valid_pid()
+    }
+    pub fn is_valid_byr(&self) -> bool {
         let mut valid = true;
         if let Some(byr) = self.byr {
             let y = byr.parse::<usize>().unwrap_or(0);
@@ -55,6 +64,11 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+
+    pub fn is_valid_iyr(&self) -> bool {
+        let mut valid = true;
         if let Some(iyr) = self.iyr {
             let y = iyr.parse::<usize>().unwrap_or(0);
             if y < 2010 || y > 2020 {
@@ -63,6 +77,11 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+
+    pub fn is_valid_eyr(&self) -> bool {
+        let mut valid = true;
         if let Some(eyr) = self.eyr {
             let y = eyr.parse::<usize>().unwrap_or(0);
             if y < 2020 || y > 2030 {
@@ -71,6 +90,11 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+
+    pub fn is_valid_hgt(&self) -> bool {
+        let mut valid = true;
         if let Some(hgt) = self.hgt {
             let cm = hgt.trim_end_matches("cm").parse::<usize>().unwrap_or(0);
             if cm < 150 || cm > 193 {
@@ -90,6 +114,10 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+    pub fn is_valid_hcl(&self) -> bool {
+        let mut valid = true;
         if let Some(hcl) = self.hcl {
             lazy_static! {
                 static ref HCL_RE: Regex = Regex::new(r"^#[a-f0-9]{6}$").unwrap();
@@ -100,6 +128,10 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+    pub fn is_valid_ecl(&self) -> bool {
+        let mut valid = true;
         if let Some(ecl) = self.ecl {
             lazy_static! {
                 static ref EYE_COLORS: Vec<&'static str> =
@@ -111,6 +143,10 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
+        valid
+    }
+    pub fn is_valid_pid(&self) -> bool {
+        let mut valid = true;
         if let Some(pid) = self.pid {
             lazy_static! {
                 static ref PID_RE: Regex = Regex::new(r"^[0-9]{9}$").unwrap();
@@ -121,7 +157,7 @@ impl<'a> Passport<'a> {
         } else {
             valid = false;
         }
-        return valid;
+        valid
     }
 }
 
@@ -140,7 +176,7 @@ pub fn part2(inp: String) {
         "{}",
         inp.split("\n\n")
             .map(|p| p.into())
-            .filter(|p: &Passport| p.is_valid2())
+            .filter(|p: &Passport| p.is_valid_strict())
             .count()
     );
 }
