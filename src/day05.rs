@@ -84,6 +84,13 @@ pub fn part2(inp: String) {
         .map(|p| BoardingPass::from(p))
         .collect::<Vec<BoardingPass>>();
     pass_list.sort();
-    let (last_good, _) = pass_list.iter().enumerate().filter(|(i,p)| p.get_id() - 54 == *i).last().unwrap();
-    println!("{:?}", last_good + 55 );
+    let first = pass_list[0].get_id();
+    if let Some((last_good, _)) = pass_list
+        .iter()
+        .enumerate()
+        .filter(|(i, p)| p.get_id() - first == *i)
+        .last()
+    {
+        println!("{:?}", last_good + first + 1);
+    }
 }
