@@ -54,110 +54,95 @@ impl<'a> Passport<'a> {
             && self.is_valid_ecl()
             && self.is_valid_pid()
     }
+
     pub fn is_valid_byr(&self) -> bool {
-        let mut valid = true;
         if let Some(byr) = self.byr {
             let y = byr.parse::<usize>().unwrap_or(0);
-            if y < 1920 || y > 2002 {
-                valid = false;
-            }
+            !(y < 1920 || y > 2002)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
 
     pub fn is_valid_iyr(&self) -> bool {
-        let mut valid = true;
         if let Some(iyr) = self.iyr {
             let y = iyr.parse::<usize>().unwrap_or(0);
-            if y < 2010 || y > 2020 {
-                valid = false;
-            }
+            !(y < 2010 || y > 2020)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
 
     pub fn is_valid_eyr(&self) -> bool {
-        let mut valid = true;
         if let Some(eyr) = self.eyr {
             let y = eyr.parse::<usize>().unwrap_or(0);
-            if y < 2020 || y > 2030 {
-                valid = false;
-            }
+            !(y < 2020 || y > 2030)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
 
     pub fn is_valid_hgt(&self) -> bool {
-        let mut valid = true;
         if let Some(hgt) = self.hgt {
-            let cm = hgt.trim_end_matches("cm").parse::<usize>().unwrap_or(0);
-            if cm < 150 || cm > 193 {
-                if cm != 0 {
-                    valid = false;
-                }
+            lazy_static! {
+                static ref HGT_RE: Regex = Regex::new(r"^(\d+)(cm|in)$").unwrap();
             }
-            let inc = hgt.trim_end_matches("in").parse::<usize>().unwrap_or(0);
-            if inc < 59 || inc > 76 {
-                if inc != 0 {
-                    valid = false;
+            if let Some(c) = HGT_RE.captures(hgt) {
+                match c.get(2).map_or("0", |m| m.as_str()) {
+                    "cm" => {
+                        if let Ok(h) = c.get(1).map_or("0", |m| m.as_str()).parse::<usize>() {
+                            !(h < 150 || h > 193)
+                        } else {
+                            false
+                        }
+                    }
+                    "in" => {
+                        if let Ok(h) = c.get(1).map_or("0", |m| m.as_str()).parse::<usize>() {
+                            !(h < 59 || h > 76)
+                        } else {
+                            false
+                        }
+                    }
+                    _ => false,
                 }
-            }
-            if inc == 0 && cm == 0 {
-                valid = false;
+            } else {
+                false
             }
         } else {
-            valid = false;
+            false
         }
-        valid
     }
     pub fn is_valid_hcl(&self) -> bool {
-        let mut valid = true;
         if let Some(hcl) = self.hcl {
             lazy_static! {
                 static ref HCL_RE: Regex = Regex::new(r"^#[a-f0-9]{6}$").unwrap();
             }
-            if !HCL_RE.is_match(hcl) {
-                valid = false;
-            }
+            HCL_RE.is_match(hcl)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
     pub fn is_valid_ecl(&self) -> bool {
-        let mut valid = true;
         if let Some(ecl) = self.ecl {
             lazy_static! {
                 static ref EYE_COLORS: Vec<&'static str> =
                     vec!["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
             }
-            if !EYE_COLORS.contains(&ecl) {
-                valid = false;
-            }
+            EYE_COLORS.contains(&ecl)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
+
     pub fn is_valid_pid(&self) -> bool {
-        let mut valid = true;
         if let Some(pid) = self.pid {
             lazy_static! {
                 static ref PID_RE: Regex = Regex::new(r"^[0-9]{9}$").unwrap();
             }
-            if !PID_RE.is_match(pid) {
-                valid = false;
-            }
+            PID_RE.is_match(pid)
         } else {
-            valid = false;
+            false
         }
-        valid
     }
 }
 
