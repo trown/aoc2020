@@ -14,10 +14,9 @@ pub fn part1(inp: String) {
 pub fn part2(inp: String) {
     println!(
         "{}",
-        get_trees(&inp, 1, 1)
-            * get_trees(&inp, 1, 3)
-            * get_trees(&inp, 1, 5)
-            * get_trees(&inp, 1, 7)
-            * get_trees(&inp, 2, 1)
+        [(1, 1), (1, 3), (1, 5), (1, 7), (2, 1)]
+            .iter()
+            .map(|(rise, run)| get_trees(&inp, *rise, *run))
+            .product::<usize>()
     );
 }
