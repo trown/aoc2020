@@ -21,14 +21,19 @@ impl<'a> CustomForm<'a> {
     }
 
     pub fn group_any_yes(&self) -> usize {
-        let mut dedupe: HashSet<char> = HashSet::new();
-        for m in self.yes.iter() {
-            for c in m.chars() {
-                dedupe.insert(c);
-            }
-        }
-        dedupe.len()
+        let groups: Vec<HashSet<char>> = self.yes.iter().map(|a| a.chars().collect()).collect();
+
+        let mut iter = groups.iter();
+        iter.next()
+            .map(|start| {
+                iter.fold(start.clone(), |all, next| {
+                    all.union(next).into_iter().cloned().collect()
+                })
+            })
+            .unwrap()
+            .len()
     }
+    
 
     pub fn group_all_yes(&self) -> usize {
         let groups: Vec<HashSet<char>> = self.yes.iter().map(|a| a.chars().collect()).collect();
