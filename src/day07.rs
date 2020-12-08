@@ -27,12 +27,7 @@ impl<'a> LuggageRules<'a> {
                     .filter(|b| !b.get(0).unwrap().as_str().starts_with(" "))
                     .map(|b| {
                         let bag = b.get(0).unwrap().as_str();
-                        (
-                            bag[..1]
-                                .parse::<usize>()
-                                .unwrap_or(0),
-                            &bag[2..],
-                        )
+                        (bag[..1].parse::<usize>().unwrap_or(0), &bag[2..])
                     })
                     .collect();
                 rules.insert(k, v);
