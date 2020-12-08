@@ -33,7 +33,6 @@ impl<'a> CustomForm<'a> {
             .unwrap()
             .len()
     }
-    
 
     pub fn group_all_yes(&self) -> usize {
         let groups: Vec<HashSet<char>> = self.yes.iter().map(|a| a.chars().collect()).collect();
