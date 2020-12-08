@@ -16,25 +16,22 @@ impl<'a> From<&'a str> for LuggageRules<'a> {
 impl<'a> LuggageRules<'a> {
     pub fn new(s: &'a str) -> Self {
         lazy_static! {
-            static ref LR_RE: Regex =
-                Regex::new(r"^([a-z]+ [a-z]+) bags contain (\d [a-z]+ [a-z]+ .*)+\.$").unwrap();
-            static ref BC_RE: Regex = Regex::new(r"^(\d) ([a-z]+ [a-z]+) bag").unwrap();
+            static ref LR_RE: Regex = Regex::new(r"(\d? ?[a-z]+ [a-z]+)").unwrap();
         }
         let mut rules = HashMap::new();
         for rule in s.split("\n") {
-            if let Some(lr) = LR_RE.captures(rule) {
-                //let mut v = Vec::new();
-                let k = lr.get(1).unwrap().as_str();
-                let v: Vec<(usize, &str)> = lr
-                    .get(2)
-                    .unwrap()
-                    .as_str()
-                    .split(", ")
-                    .map(|x| {
-                        let cap = BC_RE.captures(x).unwrap();
+            let mut iter = LR_RE.captures_iter(rule);
+            if let Some(k) = iter.next() {
+                let k = k.get(0).unwrap().as_str();
+                let v: Vec<(usize, &'a str)> = iter
+                    .filter(|b| !b.get(0).unwrap().as_str().starts_with(" "))
+                    .map(|b| {
+                        let bag = b.get(0).unwrap().as_str();
                         (
-                            cap.get(1).unwrap().as_str().parse::<usize>().unwrap_or(0),
-                            cap.get(2).unwrap().as_str(),
+                            bag[..1]
+                                .parse::<usize>()
+                                .unwrap_or(0),
+                            &bag[2..],
                         )
                     })
                     .collect();
