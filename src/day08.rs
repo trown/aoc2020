@@ -9,7 +9,7 @@ pub struct Program<'a> {
     state: ProgramState,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ProgramState {
     Init,
     Complete,
@@ -27,7 +27,7 @@ impl<'a> Iterator for Program<'a> {
             self.state = ProgramState::Complete;
             None
         } else {
-            let ins = self.instructions[self.pointer].clone();
+            let ins = &self.instructions[self.pointer];
             match ins.code {
                 "acc" => {
                     self.seen.insert(self.pointer);
@@ -75,23 +75,18 @@ impl<'a> Program<'a> {
     }
 
     pub fn fix_program(&mut self) -> i32 {
-        let mut acc = 0;
         let instructions = self.instructions.clone();
         for (i, v) in instructions.iter().enumerate() {
-            if acc == 0 && ["jmp", "nop"].contains(&v.code) {
+            if ["jmp", "nop"].contains(&v.code) {
                 self.instructions[i].code = flip(v.code);
-                acc = self.find_loop();
-                match self.state {
-                    ProgramState::Complete => (),
-                    _ => {
-                        acc = 0;
-                        self.instructions[i].code = v.code;
-                        self.reset();
-                    }
+                self.find_loop();
+                if self.state != ProgramState::Complete {
+                    self.instructions[i].code = v.code;
+                    self.reset();
                 }
             }
         }
-        acc
+        self.accumulator
     }
 }
 
