@@ -1,16 +1,14 @@
-use std::iter::repeat;
-
 pub fn find_first_invalid(preamble: usize, encrypted: Vec<u64>) -> u64 {
     (preamble..encrypted.len())
-        .filter(|i| {
-            !repeat(i)
-                .zip(encrypted[i - preamble..*i].iter())
-                .any(|(i, j)| {
-                    j < &encrypted[*i]
-                        && encrypted[i - preamble..*i].contains(&(&encrypted[*i] - j))
-                })
+        .filter_map(|i| {
+            if encrypted[i - preamble..i].iter().any(|j| {
+                j < &encrypted[i] && encrypted[i - preamble..i].contains(&(&encrypted[i] - j))
+            }) {
+                None
+            } else {
+                Some(encrypted[i])
+            }
         })
-        .map(|i| encrypted[i])
         .next()
         .unwrap()
 }
@@ -19,21 +17,21 @@ pub fn find_weakness(preamble: usize, encrypted: Vec<u64>) -> u64 {
     let mut rev = encrypted.clone();
     rev.reverse();
     let first_invalid = find_first_invalid(preamble, encrypted);
-    let mut found = 0;
-
-    for (i, x) in rev.iter().enumerate() {
-        if found == 0 && x < &first_invalid {
-            for j in i + 1..rev.len() {
-                let temp_sum = (rev[i..j + 1]).iter().sum::<u64>();
-                if found == 0 && temp_sum == first_invalid {
+    rev.iter()
+        .enumerate()
+        .filter(|(_, x)| *x < &first_invalid)
+        .filter_map(|(i, _)| {
+            (i + 1..rev.len())
+                .filter(|j| first_invalid == (rev[i..j + 1]).iter().sum::<u64>())
+                .map(|j| {
                     let max = &rev[i..j + 1].iter().max().unwrap();
                     let min = &rev[i..j + 1].iter().min().unwrap();
-                    found = *max + *min;
-                }
-            }
-        }
-    }
-    found
+                    *max + *min
+                })
+                .next()
+        })
+        .next()
+        .unwrap()
 }
 
 pub fn part1(inp: String) {
