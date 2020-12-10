@@ -24,27 +24,26 @@ pub fn find_all_chains(adapters: Vec<usize>) -> u64 {
                 match adapters[i + 1] - a {
                     1 => streak += 1,
                     3 => {
-                        total = match streak {
-                            1 => 1,
-                            2 => 1,
-                            3 => 2,
-                            n => 2_u64.pow(n - 2) - ((n - 4) as u64),
-                        } * total;
+                        total = map_streak(streak) * total;
                         streak = 1;
                     }
                     _ => (),
                 }
             } else {
-                total = match streak {
-                    1 => 1,
-                    2 => 1,
-                    3 => 2,
-                    n => 2_u64.pow(n - 2) - ((n - 4) as u64),
-                } * total;
+                total = map_streak(streak) * total;
             }
             (streak, total)
         });
     cnt.1
+}
+
+pub fn map_streak(streak: u64) -> u64 {
+    match streak {
+        1 => 1,
+        2 => 1,
+        3 => 2,
+        n => 2_u64.pow(n as u32 - 2) - (n - 4),
+    }
 }
 
 pub fn part1(inp: String) {
