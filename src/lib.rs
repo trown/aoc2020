@@ -13,6 +13,7 @@ pub mod day08;
 pub mod day09;
 pub mod day10;
 pub mod day11;
+pub mod day12;
 
 pub fn noop(_inp: String) {}
 
@@ -31,6 +32,7 @@ pub fn get_day(day: u32) -> (DayFn, DayFn) {
         9 => (day09::part1, day09::part2),
         10 => (day10::part1, day10::part2),
         11 => (day11::part1, day11::part2),
+        12 => (day12::part1, day12::part2),
         _ => {
             println!("Unknown day: {}", day);
             return (noop, noop);
