@@ -25,7 +25,7 @@ impl FloorPos {
     }
     pub fn is_floor(&self) -> bool {
         self == &FloorPos::Floor
-    }    
+    }
 }
 
 #[derive(Debug)]
