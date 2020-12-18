@@ -70,18 +70,14 @@ impl<'a> PartialEq for BoardingPass<'a> {
 pub fn part1(inp: String) {
     println!(
         "{:?}",
-        inp.lines()
-            .map(|p| BoardingPass::from(p))
-            .max()
-            .unwrap()
-            .get_id()
+        inp.lines().map(BoardingPass::from).max().unwrap().get_id()
     );
 }
 
 pub fn part2(inp: String) {
     let mut pass_list = inp
         .lines()
-        .map(|p| BoardingPass::from(p))
+        .map(BoardingPass::from)
         .collect::<Vec<BoardingPass>>();
     pass_list.sort();
     let first = pass_list[0].get_id();

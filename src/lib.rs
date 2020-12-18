@@ -10,11 +10,13 @@ pub mod day05;
 pub mod day06;
 pub mod day07;
 pub mod day08;
+#[allow(clippy::blocks_in_if_conditions)]
 pub mod day09;
 pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day13;
+#[allow(clippy::needless_range_loop)]
 pub mod day15;
 pub mod day18;
 
@@ -22,6 +24,7 @@ pub fn noop(_inp: String) {}
 
 pub type DayFn = fn(String);
 
+#[allow(clippy::all)]
 pub fn get_day(day: u32) -> (DayFn, DayFn) {
     return match day {
         1 => (day01::part1, day01::part2),

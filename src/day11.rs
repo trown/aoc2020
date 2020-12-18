@@ -49,8 +49,9 @@ impl Layout {
     }
     fn tick(&mut self) -> Option<&mut Self> {
         let mut swap = vec![vec![FloorPos::Floor; self.state[0].len()]; self.state.len()];
-        for i in 0..self.state.len() {
-            for j in 0..self.state[0].len() {
+
+        for (i, row) in swap.iter_mut().enumerate().take(self.state.len()) {
+            for (j, pos) in row.iter_mut().enumerate().take(self.state[0].len()) {
                 let fp = self.state[i][j];
                 let occupied_neighbors = match &self.part {
                     Part::Part1 => self.occupied_neighbor_count(i, j),
@@ -64,7 +65,7 @@ impl Layout {
                     (otherwise, _, _) => otherwise,
                 };
 
-                swap[i][j] = next_pos;
+                *pos = next_pos;
             }
         }
         self.state = swap;
@@ -76,19 +77,20 @@ impl Layout {
     }
 
     fn occupied_neighbor_count(&self, i: usize, j: usize) -> usize {
-        let (mut n, mut s, mut e, mut w, mut ne, mut nw, mut se, mut sw) = (0, 0, 0, 0, 0, 0, 0, 0);
+        let (mut north, mut south, mut east, mut west, mut ne, mut nw, mut se, mut sw) =
+            (0, 0, 0, 0, 0, 0, 0, 0);
 
         if i > 0 {
-            n = self.state[i - 1][j].is_occupied() as usize;
+            north = self.state[i - 1][j].is_occupied() as usize;
         }
         if i < self.state.len() - 1 {
-            s = self.state[i + 1][j].is_occupied() as usize;
+            south = self.state[i + 1][j].is_occupied() as usize;
         }
         if j < self.state[0].len() - 1 {
-            e = self.state[i][j + 1].is_occupied() as usize;
+            east = self.state[i][j + 1].is_occupied() as usize;
         }
         if j > 0 {
-            w = self.state[i][j - 1].is_occupied() as usize;
+            west = self.state[i][j - 1].is_occupied() as usize;
         }
         if i > 0 && j < self.state[0].len() - 1 {
             ne = self.state[i - 1][j + 1].is_occupied() as usize;
@@ -103,93 +105,86 @@ impl Layout {
             sw = self.state[i + 1][j - 1].is_occupied() as usize;
         }
 
-        n + s + e + w + ne + nw + se + sw
+        north + south + east + west + ne + nw + se + sw
     }
 
     fn occupied_neighbor_count_part2(&self, i: usize, j: usize) -> usize {
-        let (mut n, mut s, mut e, mut w, mut ne, mut nw, mut se, mut sw) = (0, 0, 0, 0, 0, 0, 0, 0);
+        let (mut north, mut south, mut east, mut west, mut ne, mut nw, mut se, mut sw) =
+            (0, 0, 0, 0, 0, 0, 0, 0);
 
         if i > 0 {
-            let o = (1..i + 1)
+            if let Some(o) = (1..i + 1)
                 .map(|x| self.state[i - x][j])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                n = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                north = o.is_occupied() as usize;
             }
         }
         if i < self.state.len() - 1 {
-            let o = (1..self.state.len() - i)
+            if let Some(o) = (1..self.state.len() - i)
                 .map(|x| self.state[i + x][j])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                w = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                west = o.is_occupied() as usize;
             }
         }
         if j < self.state[0].len() - 1 {
-            let o = (1..self.state[0].len() - j)
+            if let Some(o) = (1..self.state[0].len() - j)
                 .map(|x| self.state[i][j + x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                e = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                east = o.is_occupied() as usize;
             }
         }
         if j > 0 {
-            let o = (1..j + 1)
+            if let Some(o) = (1..j + 1)
                 .map(|x| self.state[i][j - x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                s = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                south = o.is_occupied() as usize;
             }
         }
         if i > 0 && j < self.state[0].len() - 1 {
-            let o = (1..min(i + 1, self.state[0].len() - j))
+            if let Some(o) = (1..min(i + 1, self.state[0].len() - j))
                 .map(|x| self.state[i - x][j + x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                ne = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                ne = o.is_occupied() as usize;
             }
         }
         if i > 0 && j > 0 {
-            let o = (1..min(i + 1, j + 1))
+            if let Some(o) = (1..min(i + 1, j + 1))
                 .map(|x| self.state[i - x][j - x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                nw = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                nw = o.is_occupied() as usize;
             }
         }
         if i < self.state.len() - 1 && j < self.state[0].len() - 1 {
-            let o = (1..min(self.state.len() - i, self.state[0].len() - j))
+            if let Some(o) = (1..min(self.state.len() - i, self.state[0].len() - j))
                 .map(|x| self.state[i + x][j + x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                se = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                se = o.is_occupied() as usize;
             }
         }
         if i < self.state.len() - 1 && j > 0 {
-            let o = (1..min(self.state.len() - i, j + 1))
+            if let Some(o) = (1..min(self.state.len() - i, j + 1))
                 .map(|x| self.state[i + x][j - x])
-                .filter(|tile| !tile.is_floor())
-                .next();
-            if o.is_some() {
-                sw = o.unwrap().is_occupied() as usize;
+                .find(|tile| !tile.is_floor())
+            {
+                sw = o.is_occupied() as usize;
             }
         }
 
-        n + s + e + w + ne + nw + se + sw
+        north + south + east + west + ne + nw + se + sw
     }
 }
 
 pub fn part1(inp: String) {
     let mut layout = Layout::new(
-        inp.split("\n")
-            .map(|row| row.chars().map(|c| FloorPos::from(c)).collect::<Vec<_>>())
+        inp.split('\n')
+            .map(|row| row.chars().map(FloorPos::from).collect::<Vec<_>>())
             .collect::<Vec<_>>(),
         Part::Part1,
     );
@@ -204,15 +199,15 @@ pub fn part1(inp: String) {
                     .filter(|pos| pos.is_occupied())
                     .count()
             );
-            return ();
+            return;
         }
     }
 }
 
 pub fn part2(inp: String) {
     let mut layout = Layout::new(
-        inp.split("\n")
-            .map(|row| row.chars().map(|c| FloorPos::from(c)).collect::<Vec<_>>())
+        inp.split('\n')
+            .map(|row| row.chars().map(FloorPos::from).collect::<Vec<_>>())
             .collect::<Vec<_>>(),
         Part::Part2,
     );
@@ -228,7 +223,7 @@ pub fn part2(inp: String) {
                     .filter(|pos| pos.is_occupied())
                     .count()
             );
-            return ();
+            return;
         }
     }
 }

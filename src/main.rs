@@ -1,3 +1,5 @@
+#![allow(clippy::all)]
+
 use std::env;
 use std::fs;
 use std::io;

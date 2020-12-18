@@ -19,12 +19,12 @@ impl<'a> LuggageRules<'a> {
             static ref LR_RE: Regex = Regex::new(r"(\d? ?[a-z]+ [a-z]+)").unwrap();
         }
         let mut rules = HashMap::new();
-        for rule in s.split("\n") {
+        for rule in s.split('\n') {
             let mut iter = LR_RE.captures_iter(rule);
             if let Some(k) = iter.next() {
                 let k = k.get(0).unwrap().as_str();
                 let v: Vec<(usize, &'a str)> = iter
-                    .filter(|b| !b.get(0).unwrap().as_str().starts_with(" "))
+                    .filter(|b| !b.get(0).unwrap().as_str().starts_with(' '))
                     .map(|b| {
                         let bag = b.get(0).unwrap().as_str();
                         (bag[..1].parse::<usize>().unwrap_or(0), &bag[2..])
@@ -39,40 +39,36 @@ impl<'a> LuggageRules<'a> {
     pub fn can_contain_gold(&self, mut seen: &mut HashMap<&'a str, bool>, color: &'a str) -> bool {
         if let Some(c) = seen.get(color) {
             *c
-        } else {
-            if let Some(rules) = self.rules.get(color) {
-                if format!("{:?}", rules).contains(&"shiny gold") {
-                    seen.insert(color, true);
-                    true
-                } else {
-                    let c = rules
-                        .iter()
-                        .map(|(_, color)| self.can_contain_gold(&mut seen, color))
-                        .any(|c| c);
-                    seen.insert(color, c);
-                    c
-                }
+        } else if let Some(rules) = self.rules.get(color) {
+            if format!("{:?}", rules).contains(&"shiny gold") {
+                seen.insert(color, true);
+                true
             } else {
-                false
+                let c = rules
+                    .iter()
+                    .map(|(_, color)| self.can_contain_gold(&mut seen, color))
+                    .any(|c| c);
+                seen.insert(color, c);
+                c
             }
+        } else {
+            false
         }
     }
 
     pub fn bags_contained(&self, mut seen: &mut HashMap<&'a str, usize>, color: &'a str) -> usize {
         if let Some(c) = seen.get(color) {
             *c
+        } else if let Some(rules) = self.rules.get(color) {
+            let c = rules
+                .iter()
+                .map(|(n, color)| n + n * self.bags_contained(&mut seen, color))
+                .sum();
+            seen.insert(color, c);
+            c
         } else {
-            if let Some(rules) = self.rules.get(color) {
-                let c = rules
-                    .iter()
-                    .map(|(n, color)| n + n * self.bags_contained(&mut seen, color))
-                    .sum();
-                seen.insert(color, c);
-                c
-            } else {
-                seen.insert(color, 0);
-                0
-            }
+            seen.insert(color, 0);
+            0
         }
     }
 }

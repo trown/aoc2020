@@ -21,7 +21,7 @@ impl<'a> Passport<'a> {
     pub fn new(s: &'a str) -> Self {
         let mut passport = Passport::default();
         for field in s.split(|c| c == ' ' || c == '\n') {
-            let kv: Vec<_> = field.split(":").collect();
+            let kv: Vec<_> = field.split(':').collect();
             match kv[0] {
                 "byr" => passport.byr = Some(kv[1]),
                 "iyr" => passport.iyr = Some(kv[1]),
@@ -58,7 +58,7 @@ impl<'a> Passport<'a> {
     pub fn is_valid_byr(&self) -> bool {
         if let Some(byr) = self.byr {
             let y = byr.parse::<usize>().unwrap_or(0);
-            !(y < 1920 || y > 2002)
+            !(1920..=2002).contains(&y)
         } else {
             false
         }
@@ -67,7 +67,7 @@ impl<'a> Passport<'a> {
     pub fn is_valid_iyr(&self) -> bool {
         if let Some(iyr) = self.iyr {
             let y = iyr.parse::<usize>().unwrap_or(0);
-            !(y < 2010 || y > 2020)
+            !(2010..=2020).contains(&y)
         } else {
             false
         }
@@ -76,7 +76,7 @@ impl<'a> Passport<'a> {
     pub fn is_valid_eyr(&self) -> bool {
         if let Some(eyr) = self.eyr {
             let y = eyr.parse::<usize>().unwrap_or(0);
-            !(y < 2020 || y > 2030)
+            !(2020..=2030).contains(&y)
         } else {
             false
         }
@@ -91,14 +91,14 @@ impl<'a> Passport<'a> {
                 match c.get(2).map_or("0", |m| m.as_str()) {
                     "cm" => {
                         if let Ok(h) = c.get(1).map_or("0", |m| m.as_str()).parse::<usize>() {
-                            !(h < 150 || h > 193)
+                            !(150..=193).contains(&h)
                         } else {
                             false
                         }
                     }
                     "in" => {
                         if let Ok(h) = c.get(1).map_or("0", |m| m.as_str()).parse::<usize>() {
-                            !(h < 59 || h > 76)
+                            (59..=76).contains(&h)
                         } else {
                             false
                         }

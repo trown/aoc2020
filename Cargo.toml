@@ -9,7 +9,6 @@ edition = "2018"
 [dependencies]
 regex = "1"
 lazy_static = "1.4.0"
-rayon = "1.5"
 
 [dev-dependencies.cargo-husky]
 version = "1"

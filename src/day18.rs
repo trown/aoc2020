@@ -19,12 +19,12 @@ pub enum Part {
 
 /// parse a string into a node
 pub fn parse(txt: &str, part: &Part) -> Option<Node> {
-    let chars = txt.chars().filter(|c| *c != ' ').collect();
+    let chars: Vec<char> = txt.chars().filter(|c| *c != ' ').collect();
     parse_expression(&chars, 0, part).map(|(_, n)| n)
 }
 
 /// parse an expression into a node, keeping track of the position in the character vector
-fn parse_expression(chars: &Vec<char>, pos: usize, part: &Part) -> Option<(usize, Node)> {
+fn parse_expression(chars: &[char], pos: usize, part: &Part) -> Option<(usize, Node)> {
     match parse_start(chars, pos, part) {
         Some((new_pos, first)) => match parse_operator(chars, new_pos) {
             Some((new_pos2, op)) => {
@@ -66,7 +66,7 @@ fn precedence(op: &Op, part: &Part) -> usize {
 }
 
 /// try to parse from the start of an expression (either a parenthesis or a value)
-fn parse_start(chars: &Vec<char>, pos: usize, part: &Part) -> Option<(usize, Node)> {
+fn parse_start(chars: &[char], pos: usize, part: &Part) -> Option<(usize, Node)> {
     match start_parenthesis(chars, pos) {
         Some(new_pos) => {
             let r = parse_expression(chars, new_pos, part);
@@ -77,7 +77,7 @@ fn parse_start(chars: &Vec<char>, pos: usize, part: &Part) -> Option<(usize, Nod
 }
 
 /// match a starting parentheseis
-fn start_parenthesis(chars: &Vec<char>, pos: usize) -> Option<usize> {
+fn start_parenthesis(chars: &[char], pos: usize) -> Option<usize> {
     if pos < chars.len() && chars[pos] == '(' {
         Some(pos + 1)
     } else {
@@ -86,7 +86,7 @@ fn start_parenthesis(chars: &Vec<char>, pos: usize) -> Option<usize> {
 }
 
 /// match an end parenthesis, if successful will create a sub node contained the wrapped expression
-fn end_parenthesis(chars: &Vec<char>, wrapped: Option<(usize, Node)>) -> Option<(usize, Node)> {
+fn end_parenthesis(chars: &[char], wrapped: Option<(usize, Node)>) -> Option<(usize, Node)> {
     match wrapped {
         Some((pos, node)) => {
             if pos < chars.len() && chars[pos] == ')' {
@@ -99,10 +99,10 @@ fn end_parenthesis(chars: &Vec<char>, wrapped: Option<(usize, Node)>) -> Option<
     }
 }
 
-fn parse_value(chars: &Vec<char>, pos: usize) -> Option<(usize, Node)> {
+fn parse_value(chars: &[char], pos: usize) -> Option<(usize, Node)> {
     let mut new_pos = pos;
     while new_pos < chars.len() && (chars[new_pos] >= '0' && chars[new_pos] <= '9') {
-        new_pos = new_pos + 1;
+        new_pos += 1;
     }
     if new_pos > pos {
         if let Ok(v) = chars[pos..new_pos].iter().collect::<String>().parse() {
@@ -116,7 +116,7 @@ fn parse_value(chars: &Vec<char>, pos: usize) -> Option<(usize, Node)> {
 }
 
 /// parse an operator
-fn parse_operator(chars: &Vec<char>, pos: usize) -> Option<(usize, Op)> {
+fn parse_operator(chars: &[char], pos: usize) -> Option<(usize, Op)> {
     if pos < chars.len() {
         let ops_with_char = vec![('+', Op::Plus), ('*', Op::Mult)];
         for (ch, op) in ops_with_char {

@@ -142,7 +142,7 @@ pub fn part1(inp: String) {
         facing: Direction::East,
     };
     let end = inp
-        .split("\n")
+        .split('\n')
         .fold(init, |acc, ins| acc.next(Instruction::from(ins)));
     println!(
         "{:?}",
@@ -165,7 +165,7 @@ pub fn part2(inp: String) {
         },
     };
     //let inp = "F10\nN3\nF7\nR90\nF11";
-    let end = inp.split("\n").fold(init, |acc, ins| {
+    let end = inp.split('\n').fold(init, |acc, ins| {
         println!("{:?}", acc);
         acc.next(Instruction::from(ins))
     });

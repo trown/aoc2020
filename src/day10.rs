@@ -24,13 +24,13 @@ pub fn find_all_chains(adapters: Vec<usize>) -> u64 {
                 match adapters[i + 1] - a {
                     1 => streak += 1,
                     3 => {
-                        total = map_streak(streak) * total;
+                        total *= map_streak(streak);
                         streak = 1;
                     }
                     _ => (),
                 }
             } else {
-                total = map_streak(streak) * total;
+                total *= map_streak(streak);
             }
             (streak, total)
         });
@@ -47,15 +47,15 @@ pub fn map_streak(streak: u64) -> u64 {
 }
 
 pub fn part1(inp: String) {
-    let mut adapters: Vec<usize> = inp.split("\n").map(|i| i.parse().unwrap()).collect();
+    let mut adapters: Vec<usize> = inp.split('\n').map(|i| i.parse().unwrap()).collect();
     adapters.push(0);
-    adapters.sort();
+    adapters.sort_unstable();
     println!("{:?}", find_chain(adapters));
 }
 
 pub fn part2(inp: String) {
-    let mut adapters: Vec<usize> = inp.split("\n").map(|i| i.parse().unwrap()).collect();
+    let mut adapters: Vec<usize> = inp.split('\n').map(|i| i.parse().unwrap()).collect();
     adapters.push(0);
-    adapters.sort();
+    adapters.sort_unstable();
     println!("{:?}", find_all_chains(adapters));
 }

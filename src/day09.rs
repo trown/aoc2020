@@ -2,7 +2,7 @@ pub fn find_first_invalid(preamble: usize, encrypted: Vec<u64>) -> u64 {
     (preamble..encrypted.len())
         .filter_map(|i| {
             if encrypted[i - preamble..i].iter().any(|j| {
-                j < &encrypted[i] && encrypted[i - preamble..i].contains(&(&encrypted[i] - j))
+                j < &encrypted[i] && encrypted[i - preamble..i].contains(&(encrypted[i] - j))
             }) {
                 None
             } else {
@@ -35,11 +35,11 @@ pub fn find_weakness(preamble: usize, encrypted: Vec<u64>) -> u64 {
 }
 
 pub fn part1(inp: String) {
-    let encrypted: Vec<u64> = inp.split("\n").map(|i| i.parse().unwrap()).collect();
+    let encrypted: Vec<u64> = inp.split('\n').map(|i| i.parse().unwrap()).collect();
     println!("{}", find_first_invalid(25, encrypted));
 }
 
 pub fn part2(inp: String) {
-    let encrypted: Vec<u64> = inp.split("\n").map(|i| i.parse().unwrap()).collect();
+    let encrypted: Vec<u64> = inp.split('\n').map(|i| i.parse().unwrap()).collect();
     println!("{}", find_weakness(25, encrypted));
 }

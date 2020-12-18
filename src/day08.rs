@@ -104,7 +104,7 @@ impl<'a> From<&'a str> for Instruction<'a> {
 
 impl<'a> Instruction<'a> {
     pub fn new(s: &'a str) -> Self {
-        let v: Vec<_> = s.split(" ").collect();
+        let v: Vec<_> = s.split(' ').collect();
         Instruction {
             code: v[0],
             arg: v[1].parse().unwrap(),
@@ -121,13 +121,13 @@ pub fn flip(code: &str) -> &str {
 }
 
 pub fn part1(inp: String) {
-    let instructions: Vec<Instruction> = inp.split("\n").map(|i| i.into()).collect();
+    let instructions: Vec<Instruction> = inp.split('\n').map(|i| i.into()).collect();
     let mut program = Program::new(instructions);
     println!("{:?}", program.find_loop());
 }
 
 pub fn part2(inp: String) {
-    let instructions: Vec<Instruction> = inp.split("\n").map(|i| i.into()).collect();
+    let instructions: Vec<Instruction> = inp.split('\n').map(|i| i.into()).collect();
     let mut program = Program::new(instructions);
     println!("{:?}", program.fix_program());
 }
