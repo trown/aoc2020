@@ -19,6 +19,7 @@ pub mod day13;
 pub mod day14;
 #[allow(clippy::needless_range_loop)]
 pub mod day15;
+pub mod day17;
 pub mod day18;
 
 pub fn noop(_inp: String) {}
@@ -43,6 +44,7 @@ pub fn get_day(day: u32) -> (DayFn, DayFn) {
         13 => (day13::part1, day13::part2),
         14 => (day14::part1, day14::part2),
         15 => (day15::part1, day15::part2),
+        17 => (day17::part1, day17::part2),
         18 => (day18::part1, day18::part2),
         _ => {
             println!("Unknown day: {}", day);
