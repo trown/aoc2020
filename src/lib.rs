@@ -16,6 +16,7 @@ pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day13;
+pub mod day14;
 #[allow(clippy::needless_range_loop)]
 pub mod day15;
 pub mod day18;
@@ -40,6 +41,7 @@ pub fn get_day(day: u32) -> (DayFn, DayFn) {
         11 => (day11::part1, day11::part2),
         12 => (day12::part1, day12::part2),
         13 => (day13::part1, day13::part2),
+        14 => (day14::part1, day14::part2),
         15 => (day15::part1, day15::part2),
         18 => (day18::part1, day18::part2),
         _ => {
